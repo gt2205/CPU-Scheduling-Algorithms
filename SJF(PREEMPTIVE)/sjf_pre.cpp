@@ -34,7 +34,7 @@ void sjf(vector<Process> &processes) {
 
   // Initialize time with the arrival time of the first process
   int t = processes[0].arrival;
-  int time_quantum = 2; // Time after which current process is preempted
+  int time_quantum = 1; // Time after which current process is preempted
   int i = 0;            // Index to keep track of the processes
 
   // Continue until all processes are handled
