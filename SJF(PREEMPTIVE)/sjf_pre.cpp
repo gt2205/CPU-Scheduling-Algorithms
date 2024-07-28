@@ -22,20 +22,21 @@ struct cmp {
   }
 };
 
-// Comparator to sort processes by burst time (for SJF)
+// Comparator to sort processes by remaining burst time (for SJF Preemptive)
 struct cmp1 {
-  bool operator()(Process &a, Process &b) { return a.burst > b.burst; }
+  bool operator()(Process &a, Process &b) { return a.rem_burst > b.rem_burst; }
 };
 
-// Function to perform Shortest Job First (SJF) scheduling
+// Function to perform Shortest Job First (SJF) Preemptive scheduling
 void sjf(vector<Process> &processes) {
-  // Priority queue to get the process with the shortest burst time
+  // Priority queue to get the process with the shortest remaining burst time
   priority_queue<Process, vector<Process>, cmp1> pq;
 
   // Initialize time with the arrival time of the first process
   int t = processes[0].arrival;
-  int time_quantum = 1; // Time after which current process is preempted
-  int i = 0;            // Index to keep track of the processes
+  int time_quantum; // Time for which process can safely execute as no process
+                    // with lower burst time is present
+  int i = 0;        // Index to keep track of the processes
 
   // Continue until all processes are handled
   while (i < processes.size() || !pq.empty()) {
@@ -52,6 +53,12 @@ void sjf(vector<Process> &processes) {
       continue;
     }
 
+    if (i < processes.size()) {
+      time_quantum = processes[i].arrival - t;
+    } else {
+      time_quantum = INT_MAX;
+    }
+
     // Get the process with the shortest burst time
     Process current = pq.top();
     pq.pop();
@@ -62,16 +69,13 @@ void sjf(vector<Process> &processes) {
       t += current.rem_burst; // Advance time by the remaining burst time
       current.rem_burst = 0;  // Process is completed
       current.completion = t; // Set completion time
-      current.turnaround =
-          current.completion - current.arrival; // Calculate turnaround time
-      current.waiting =
-          current.turnaround - current.burst; // Calculate waiting time
+      current.turnaround = current.completion - current.arrival; // Calculate turnaround time
+      current.waiting = current.turnaround - current.burst; // Calculate waiting time
 
       // Update the original process list with the completion, turnaround, and
       // waiting times
       for (auto &p : processes) {
-        if (p.arrival == current.arrival && p.burst == current.burst &&
-            p.completion == 0) {
+        if (p.arrival == current.arrival && p.burst == current.burst && p.completion == 0) {
           p.completion = current.completion;
           p.turnaround = current.turnaround;
           p.waiting = current.waiting;
@@ -101,8 +105,7 @@ int main() {
     cin >> processes[i].arrival;
     cout << "Burst time: ";
     cin >> processes[i].burst;
-    processes[i].rem_burst =
-        processes[i].burst; // Initialize remaining burst time
+    processes[i].rem_burst = processes[i].burst; // Initialize remaining burst time
   }
 
   // Sort processes by arrival time, then by burst time
@@ -116,8 +119,7 @@ int main() {
   for (int i = 0; i < n; i++) {
     cout << "P" << i + 1 << "\t\t" << processes[i].arrival << "\t\t"
          << processes[i].burst << "\t\t" << processes[i].completion << "\t\t\t"
-         << processes[i].turnaround << "\t\t\t\t" << processes[i].waiting
-         << "\t\n";
+         << processes[i].turnaround << "\t\t\t\t" << processes[i].waiting << "\t\n";
   }
 
   return 0;
