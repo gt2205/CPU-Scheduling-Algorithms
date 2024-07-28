@@ -9,7 +9,7 @@ This project demonstrates the Shortest Job First (SJF) Preemptive CPU scheduling
 - [Example](#example)
 
 ## Introduction
-The Shortest Job First (SJF) Preemptive scheduling algorithm is a type of CPU scheduling algorithm that selects the process with the shortest burst time first. It operates by selecting the next process to run from the list of processes that have arrived and have the shortest burst time, with the added feature of preemption based on a time quantum. This implementation sorts processes by their arrival time and uses a priority queue to manage the processes.
+The Shortest Job First (SJF) Preemptive scheduling algorithm is a type of CPU scheduling algorithm that selects the process with the shortest burst time first. It operates by selecting the next process to run from the list of processes that have arrived and have the shortest burst time. The added feature of preemption ensures that the algorithm can switch to a newly arrived process if it has a shorter burst time than the currently running process. This implementation sorts processes by their arrival time and uses a priority queue to manage the processes.
 
 ## Features
 - Input the number of processes along with their arrival and burst times.
